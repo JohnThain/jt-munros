@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>JT's Munros</title>
+
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <link rel="stylesheet"
+          href="css/style.css">
+</head>
+
+<body>
+
+    <div id="header">
+        <h2>JT's Munros</h2>
+    </div>
+
+    <div id="search-panel">
+
+        <input
+            type="text"
+            id="search-input"
+            placeholder="Search Munro name">
+
+        <button id="search-button">
+            Find
+        </button>
+
+    </div>
+
+    <div id="search-results"></div>
+
+    <div id="legend">
+
+        <div>
+            <span class="legend-green"></span>
+            Ascended
+        </div>
+
+        <div>
+            <span class="legend-red"></span>
+            Not Ascended
+        </div>
+
+    </div>
+
+    <div id="map"></div>
+
+    <div id="north-arrow">
+		<img src="images/north_arrow.svg"
+			 alt="North">
+	</div>
+
+    <div id="photo-overlay">
+        <img id="overlay-image"
+             src=""
+             alt="">
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.11.0/proj4.js"></script>
+
+    <script src="https://unpkg.com/proj4leaflet@1.0.2/src/proj4leaflet.js"></script>
+
+    <script src="js/app.js"></script>
+
+</body>
+
+</html>
