@@ -21,9 +21,13 @@ body {
 }
 
 #map {
-    height: calc(100vh - 50px);
+    height: calc(100vh - 55px);
     width: 100%;
+	
+	border: 1px solid ##b0b0b0;
+    box-sizing: border-box;
 }
+
 
 #search-panel {
 
@@ -145,6 +149,13 @@ body {
     font-size: 14px;
 }
 
+#legend strong {
+    display: block;
+    margin-bottom: 6px;
+    text-align: center;
+    font-size: 15px;
+}
+
 #legend div {
     margin: 5px 0;
 }
@@ -188,23 +199,12 @@ body {
 }
 
 #north-arrow {
-
     position: absolute;
 
     right: 15px;
     bottom: 25px;
 
     z-index: 1000;
-
-    background: rgba(255,255,255,0.85);
-
-    border: 1px solid #444;
-
-    border-radius: 4px;
-
-    padding: 4px;
-
-    box-shadow: 0 0 4px rgba(0,0,0,0.3);
 }
 
 #north-arrow img {
@@ -214,4 +214,38 @@ body {
     width: 40px;
 
     height: 40px;
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+
+    #map {
+        height: calc(100vh - 150px);
+    }
+
+}
+
+/* Phone */
+@media (max-width: 768px) {
+
+    #legend {
+        top: 110px;
+        right: 10px;
+
+        font-size: 12px;
+        padding: 6px;
+    }
+
+    #map {
+        height: calc(100vh - 110px);
+    }
+
+    .leaflet-control-scale {
+        margin-bottom: 40px !important;
+    }
+
+    #north-arrow {
+        bottom: 40px;
+    }
+
 }
