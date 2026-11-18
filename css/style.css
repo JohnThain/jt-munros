@@ -7,12 +7,40 @@ body {
 }
 
 #header {
+
     height: 50px;
+
     background-color: #1d4f6f;
+
     color: white;
+
     display: flex;
+
     align-items: center;
-    padding-left: 15px;
+
+    justify-content: space-between;
+
+    padding: 0 15px;
+}
+
+#header-title {
+
+    font-size: 24px;
+
+    font-weight: bold;
+
+    color: white;
+}
+
+#header-banner {
+
+    height: 44px;
+
+    max-width: 300px;
+
+    object-fit: cover;
+
+    border-radius: 4px;
 }
 
 #header h2 {
@@ -216,6 +244,91 @@ body {
     height: 40px;
 }
 
+#help-button {
+
+    position: absolute;
+
+    top: 140px;
+
+    left: 10px;
+
+    z-index: 1000;
+
+    background: white;
+
+    padding: 8px 12px;
+
+    border: 1px solid #999;
+
+    border-radius: 4px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+}
+
+#help-panel {
+
+    display: none;
+
+    position: absolute;
+
+    top: 140px;
+
+    left: 100px;
+
+    width: 380px;
+
+    max-height: 70vh;
+
+    overflow-y: auto;
+
+    z-index: 2000;
+
+    background: white;
+
+    border: 1px solid #999;
+
+    border-radius: 6px;
+
+    padding: 15px;
+	
+	font-size: 12px;
+
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+
+#help-panel h3 {
+
+    margin-top: 0;
+
+    color: #1d4f6f;
+	
+	font-size: 16px;
+	
+	font-size: 14px;
+}
+
+#help-panel h4 {
+
+    margin-bottom: 5px;
+
+    color: #1d4f6f;
+}
+
+#help-close {
+
+    float: right;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    color: #666;
+}
+
 /* Tablet */
 @media (min-width: 769px) and (max-width: 1024px) {
 
@@ -247,5 +360,23 @@ body {
     #north-arrow {
         bottom: 40px;
     }
+	
+	#help-panel {
+		left: 10px;
+		right: 10px;
+		width: auto;
+		max-width: none;
+		top: 140px;
+		max-height: 60vh;
+		padding: 10px;
+		font-size: 10px;
+	}
+	#header-title {
+		font-size: 18px;
+	}
 
+	#header-banner {
+		max-width: 120px;
+		height: 35px;
+	}
 }
