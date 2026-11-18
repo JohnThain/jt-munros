@@ -334,3 +334,24 @@ document
         });
 
     });
+
+document
+    .getElementById('help-button')
+    .addEventListener('click', function () {
+
+        document
+            .getElementById('help-panel')
+            .style.display = 'block';
+
+    });
+
+
+document
+    .getElementById('help-close')
+    .addEventListener('click', function () {
+
+        document
+            .getElementById('help-panel')
+            .style.display = 'none';
+
+    });
