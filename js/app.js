@@ -355,3 +355,64 @@ document
             .style.display = 'none';
 
     });
+	
+let locationMarker;
+let accuracyCircle;
+
+
+document
+    .getElementById('locate-button')
+    .addEventListener('click', function () {
+
+        map.locate({
+            setView: true,
+            maxZoom: 8,
+            enableHighAccuracy: true
+        });
+
+    });
+	
+	map.on('locationfound', function (e) {
+
+		if (locationMarker) {
+			map.removeLayer(locationMarker);
+		}
+
+		if (accuracyCircle) {
+			map.removeLayer(accuracyCircle);
+		}
+
+		locationMarker =
+			L.marker(e.latlng)
+			 .addTo(map)
+			 .bindPopup(
+				 '<strong>Your Location</strong><br>' +
+				 'Accuracy: ' +
+				 Math.round(e.accuracy) +
+				 ' m'
+			 );
+
+		accuracyCircle =
+			L.circle(
+				e.latlng,
+				{
+					radius: e.accuracy,
+					color: '#136aec',
+					fillColor: '#136aec',
+					fillOpacity: 0.15
+				}
+			).addTo(map);
+
+		locationMarker.openPopup();
+
+	});
+	
+	map.on('locationerror', function (e) {
+
+		console.log(e);
+
+		alert(
+			'Location error: ' + e.message
+		);
+
+	});
