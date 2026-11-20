@@ -7,39 +7,25 @@ body {
 }
 
 #header {
-
     height: 50px;
-
     background-color: #1d4f6f;
-
     color: white;
-
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
-
     padding: 0 15px;
 }
 
 #header-title {
-
     font-size: 24px;
-
     font-weight: bold;
-
     color: white;
 }
 
 #header-banner {
-
     height: 44px;
-
     max-width: 300px;
-
     object-fit: cover;
-
     border-radius: 4px;
 }
 
@@ -58,20 +44,13 @@ body {
 
 
 #search-panel {
-
     position: absolute;
-
     top: 60px;
     left: 100px;
-
     z-index: 1000;
-
     background: white;
-
     padding: 8px;
-
     border-radius: 4px;
-
     box-shadow: 0 0 5px rgba(0,0,0,0.3);
 }
 
@@ -80,38 +59,25 @@ body {
 }
 
 #search-results {
-
     position: absolute;
-
     top: 100px;
     left: 100px;
-
     z-index: 1000;
-
     background: white;
-
     max-height: 250px;
-
     overflow-y: auto;
-
     width: 250px;
-
     border-radius: 4px;
-
     box-shadow: 0 0 5px rgba(0,0,0,0.3);
 }
 
 .search-result {
-
     padding: 8px;
-
     cursor: pointer;
-
     border-bottom: 1px solid #ddd;
 }
 
 .search-result:hover {
-
     background: #f0f0f0;
 }
 
@@ -168,12 +134,10 @@ body {
     top: 60px;
     right: 10px;
     z-index: 1000;
-
     background: white;
     padding: 10px;
     border: 1px solid #999;
     border-radius: 4px;
-
     font-size: 14px;
 }
 
@@ -194,7 +158,6 @@ body {
     width: 0;
     height: 0;
     margin-right: 8px;
-
     border-left: 7px solid transparent;
     border-right: 7px solid transparent;
     border-bottom: 12px solid;
@@ -209,123 +172,110 @@ body {
 }
 
 #copyright {
-
     position: absolute;
-
     bottom: 5px;
     left: 10px;
-
     z-index: 1000;
-
     background: rgba(255,255,255,0.8);
-
     padding: 4px 8px;
-
     font-size: 11px;
-
     border-radius: 3px;
 }
 
 #north-arrow {
     position: absolute;
-
     right: 15px;
     bottom: 25px;
-
     z-index: 1000;
 }
 
 #north-arrow img {
-
     display: block;
-
     width: 40px;
-
     height: 40px;
 }
 
 #help-button {
-
     position: absolute;
-
-    top: 140px;
-
+    top: 135px;
     left: 10px;
-
     z-index: 1000;
-
+    width: 30px;
+    height: 30px;
     background: white;
-
-    padding: 8px 12px;
-
-    border: 1px solid #999;
-
+    border: none;
     border-radius: 4px;
-
     cursor: pointer;
+    text-align: center;
+}
 
-    font-size: 14px;
+#help-button img {
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
+}
 
-    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+#help-button:hover {
+    background: #f4f4f4;
+}
+
+#locate-button {
+    position: absolute;
+    top: 170px;
+    left: 10px;
+    z-index: 1000;
+    width: 30px;
+    height: 30px;
+    background: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+}
+
+#locate-button:hover {
+    background: #f4f4f4;
+}
+
+#locate-button img {
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
 }
 
 #help-panel {
-
     display: none;
-
     position: absolute;
-
     top: 140px;
-
     left: 100px;
-
     width: 380px;
-
     max-height: 70vh;
-
     overflow-y: auto;
-
     z-index: 2000;
-
     background: white;
-
     border: 1px solid #999;
-
     border-radius: 6px;
-
     padding: 15px;
-	
 	font-size: 12px;
-
     box-shadow: 0 0 10px rgba(0,0,0,0.4);
 }
 
 #help-panel h3 {
-
     margin-top: 0;
-
     color: #1d4f6f;
-	
 	font-size: 16px;
-	
 	font-size: 14px;
 }
 
 #help-panel h4 {
-
     margin-bottom: 5px;
-
     color: #1d4f6f;
 }
 
 #help-close {
-
     float: right;
-
     cursor: pointer;
-
     font-weight: bold;
-
     color: #666;
 }
 
@@ -348,6 +298,11 @@ body {
         font-size: 12px;
         padding: 6px;
     }
+	
+	#locate-button {
+		left: 10px;
+		font-size: 12px;
+	}
 
     #map {
         height: calc(100vh - 110px);
