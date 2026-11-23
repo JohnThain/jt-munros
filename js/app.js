@@ -1,4 +1,8 @@
-// British National Grid (EPSG:27700) map definition
+// =====================================================
+// British National Grid (EPSG:27700)
+// Define the coordinate reference system used by
+// Ordnance Survey raster mapping.
+// =====================================================
 
 const crs = new L.Proj.CRS(
     'EPSG:27700',
@@ -16,10 +20,15 @@ const crs = new L.Proj.CRS(
     }
 );
 
-// Create map using EPSG:27700
+// =====================================================
+// Map Initialisation
+// Create the Leaflet map using the British National
+// Grid coordinate system. Max zoom level is 9, OSM is 13
+// =====================================================
 
 const map = L.map('map', {
-    crs: crs
+    crs: crs,
+	maxZoom: 9
 });
 
 map.setView(
@@ -27,13 +36,21 @@ map.setView(
     7
 );
 
+// Add metric scale bar.
+
 L.control.scale({
     imperial: false
 }).addTo(map);
 
+// Layer used to store all Munro markers.
+
 let munroLayer;
 
-// OS Leisure_27700 basemap
+// =====================================================
+// Ordnance Survey Leisure Mapping
+// Main JT's Munros basemap using native EPSG:27700
+// raster tiles from the OS Maps API.
+// =====================================================
 
 //const apiKey = 'O603GS9fvFwp8iZwjWaqP3F046JgpPTl'; //WLC
 const apiKey = 'R6aU3Vv1jfZeyZJuACUnDW6maAeJRo9B'; //JT
@@ -45,21 +62,31 @@ L.tileLayer(
             '&copy; Crown copyright and database rights ' +
             new Date().getFullYear() +
             ' Ordnance Survey',
-        maxZoom: 13
+        maxZoom: 9
     }
 ).addTo(map);
 
-// OpenStreetMap basemap
+// =====================================================
+// Alternative OpenStreetMap Basemap
+// Retained for testing and fallback purposes.
+// Uncomment to use standard web mapping instead of
+// OS Leisure mapping.
+// =====================================================
 
-/*L.tileLayer(
+/*
+L.tileLayer(
     'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     {
         attribution:
             '&copy; OpenStreetMap contributors'
     }
-).addTo(map);*/
+).addTo(map);
+*/
 
-// Determine marker colour
+// =====================================================
+// Marker Styling
+// Return marker colour based on ascent status.
+// =====================================================
 
 function getMarkerColour(feature) {
 
@@ -70,7 +97,8 @@ function getMarkerColour(feature) {
     return '#cc0000';
 }
 
-// Create triangle marker
+// Create a custom Munro marker using a coloured
+// triangular summit symbol.
 
 function createTriangleIcon(colour) {
 
@@ -109,112 +137,124 @@ function createTriangleIcon(colour) {
 
 }
 
-// Load GeoJSON
+// =====================================================
+// Load Munro Dataset
+// Read Munro locations and attributes from the
+// GeoJSON file exported from QGIS using EPSG:27700.
+// =====================================================
 
-fetch('data/munros.geojson')	//data exported using BNG CRS
+fetch('data/munros.geojson')
 
     .then(response => response.json())
 
     .then(data => {
 
-		munroLayer = L.layerGroup();
+        munroLayer = L.layerGroup();
 
-		const bounds = L.latLngBounds();
+        const bounds = L.latLngBounds();
 
-		data.features.forEach(function(feature) {
+        data.features.forEach(function (feature) {
 
-			const coords =
-				feature.geometry.coordinates;
+            const coords = feature.geometry.coordinates;
 
-			const latlng =
-				map.options.crs.unproject(
-					L.point(
-						coords[0],
-						coords[1]
-					)
-				);
-			bounds.extend(latlng);
+            // Convert British National Grid coordinates
+            // to Leaflet latitude/longitude.
 
-			const colour =
-				getMarkerColour(feature);
+            const latlng = map.options.crs.unproject(
+                L.point(
+                    coords[0],
+                    coords[1]
+                )
+            );
 
-			const marker =
-				L.marker(
-					latlng,
-					{
-						icon:
-							createTriangleIcon(colour)
-					}
-				);
+            bounds.extend(latlng);
 
-			marker.feature = feature;
+            const colour = getMarkerColour(feature);
 
-			const p = feature.properties;
+            const marker = L.marker(
+                latlng,
+                {
+                    icon: createTriangleIcon(colour)
+                }
+            );
 
-			const status =
-				p.done === 'Y'
-				? '<span class="ascended">✓ Ascended</span>'
-				: '<span class="not-ascended">✗ Not Ascended</span>';
+            marker.feature = feature;
 
-			const popupHtml = `
+            const p = feature.properties;
 
-				<div class="munro-popup">
+            // Build ascended/not ascended status text.
 
-					<h3>${p.name}</h3>
+            const status =
+                p.done === 'Y'
+                    ? '<span class="ascended">✓ Ascended</span>'
+                    : '<span class="not-ascended">✗ Not Ascended</span>';
 
-					<img src="photos/${p.photo}"
-						alt="${p.name}"
-						class="popup-photo"
-						style="cursor:pointer;">
+            // Build popup contents for the selected Munro.
 
-					<p>
-						<strong>Height:</strong>
-						${p.height} m
-					</p>
+            const popupHtml = `
 
-					<p>
-						<strong>Ascents:</strong>
-						${p.ascents}
-					</p>
+                <div class="munro-popup">
 
-					<p>
-						${status}
-					</p>
+                    <h3>${p.name}</h3>
 
-					${
-						p.geograph_url ?
-						`
-						<p>
-							<a href="${p.geograph_url}"
-							   target="_blank">
-							   View image on Geograph site
-							</a>
-						</p>
-						`
-						: ''
-					}
+                    <img src="photos/${p.photo}"
+                        alt="${p.name}"
+                        class="popup-photo"
+                        style="cursor:pointer;">
 
-				</div>
+                    <p>
+                        <strong>Height:</strong>
+                        ${p.height} m
+                    </p>
 
-			`;
+                    <p>
+                        <strong>Ascents:</strong>
+                        ${p.ascents}
+                    </p>
 
-			marker.bindPopup(
-				popupHtml,
-				{
-					maxWidth: 300
-				}
-			);
+                    <p>
+                        ${status}
+                    </p>
 
-			munroLayer.addLayer(marker);
+                    ${
+                        p.geograph_url ?
+                        `
+                        <p>
+                            <a href="${p.geograph_url}"
+                               target="_blank">
+                               View image on Geograph site
+                            </a>
+                        </p>
+                        `
+                        : ''
+                    }
 
-		});
+                </div>
 
-		munroLayer.addTo(map);
+            `;
 
-		map.fitBounds(bounds);
+            marker.bindPopup(
+                popupHtml,
+                {
+                    maxWidth: 300
+                }
+            );
+
+            munroLayer.addLayer(marker);
+
+        });
+
+        munroLayer.addTo(map);
+
+        // Zoom map to show all Munros.
+
+        map.fitBounds(bounds);
+
     })
 
     .catch(error => {
+
+        // Log dataset loading errors.
 
         console.error(
             'Failed to load munros.geojson',
@@ -224,7 +264,10 @@ fetch('data/munros.geojson')	//data exported using BNG CRS
     });
 
 
+// =====================================================
+// Photo Overlay
 // Photo enlargement
+// =====================================================
 
 document.addEventListener('click', function (e) {
 
@@ -245,174 +288,164 @@ document.addEventListener('click', function (e) {
 
 });
 
+// =====================================================
+// Close enlarged photos when the overlay is clicked.
+// =====================================================
 
-// Close enlarged photo
+document.getElementById('photo-overlay').addEventListener('click', function () {
+    this.style.display = 'none';
+});
 
-document
-    .getElementById('photo-overlay')
-    .addEventListener('click', function () {
+// =====================================================
+// Munro Search
+// Search Munros by name and display matching results.
+// Selecting a result centres the map and opens its popup.
+// =====================================================
 
-        this.style.display =
-            'none';
+document.getElementById('search-button').addEventListener('click', function () {
 
-    });
-	
-	document
-    .getElementById('search-button')
-    .addEventListener('click', function () {
+    const searchText = document.getElementById('search-input')
+        .value
+        .trim()
+        .toLowerCase();
 
-        const searchText =
-            document
-            .getElementById('search-input')
-            .value
-            .trim()
-            .toLowerCase();
+    const resultsDiv = document.getElementById('search-results');
 
-        const resultsDiv =
-            document
-            .getElementById('search-results');
+    resultsDiv.innerHTML = '';
 
-        resultsDiv.innerHTML = '';
+    if (!munroLayer || !searchText) {
+        return;
+    }
 
-        if (!munroLayer || !searchText) {
-            return;
+    munroLayer.eachLayer(function (layer) {
+
+        const p = layer.feature.properties;
+
+        if (p.name.toLowerCase().includes(searchText)) {
+
+            const result = document.createElement('div');
+
+            result.className = 'search-result';
+            result.innerHTML = `${p.name} (${p.height}m)`;
+
+			// Centre the selected Munro on the map, maintain
+			// a minimum zoom level of 7 and open its popup.
+            result.addEventListener('click', function () {
+
+				const currentZoom = map.getZoom();
+
+				map.setView(
+					layer.getLatLng(),
+					Math.max(currentZoom, 7)
+				);
+
+				layer.openPopup();
+
+				map.panTo(layer.getLatLng());
+
+				resultsDiv.innerHTML = '';
+
+			});
+
+            resultsDiv.appendChild(result);
         }
-
-        munroLayer.eachLayer(function (layer) {
-
-            const p =
-                layer.feature.properties;
-
-            if (
-                p.name
-                 .toLowerCase()
-                 .includes(searchText)
-            ) {
-
-                const result =
-                    document.createElement('div');
-
-                result.className =
-                    'search-result';
-
-                result.innerHTML =
-                    `${p.name} (${p.height}m)`;
-
-                result.addEventListener(
-                    'click',
-                    function () {
-
-                        const currentZoom = map.getZoom();
-
-						if (currentZoom < 7) {
-
-							map.setView(
-								layer.getLatLng(),
-								7
-							);
-
-						} else {
-
-							map.setView(
-								layer.getLatLng(),
-								currentZoom
-							);
-
-						}
-
-                        layer.openPopup();
-
-                        resultsDiv.innerHTML = '';
-
-                    }
-                );
-
-                resultsDiv.appendChild(
-                    result
-                );
-            }
-        });
-
     });
+});
 
-document
-    .getElementById('help-button')
-    .addEventListener('click', function () {
+// Allow Enter key to trigger a search.
 
-        document
-            .getElementById('help-panel')
-            .style.display = 'block';
+document.getElementById('search-input').addEventListener('keydown', function (e) {
 
-    });
+    if (e.key === 'Enter') {
+        document.getElementById('search-button').click();
+    }
+
+});
+
+// =====================================================
+// Help Panel Controls
+// Open and close the Help panel.
+// =====================================================
+
+// =====================================================
+// Help Panel Controls
+// Open and close the Help panel.
+// =====================================================
+
+document.getElementById('help-button').addEventListener('click', function () {
+    document.getElementById('help-panel').style.display = 'block';
+});
+
+document.getElementById('help-close').addEventListener('click', function () {
+    document.getElementById('help-panel').style.display = 'none';
+});
 
 
-document
-    .getElementById('help-close')
-    .addEventListener('click', function () {
+// =====================================================
+// Locate Me
+// Store and display the user's location and accuracy.
+// =====================================================
 
-        document
-            .getElementById('help-panel')
-            .style.display = 'none';
-
-    });
-	
 let locationMarker;
 let accuracyCircle;
 
+document.getElementById('locate-button').addEventListener('click', function () {
 
-document
-    .getElementById('locate-button')
-    .addEventListener('click', function () {
-
-        map.locate({
-            setView: true,
-            maxZoom: 8,
-            enableHighAccuracy: true
-        });
-
+    map.locate({
+        setView: true,
+        maxZoom: 8,
+        enableHighAccuracy: true
     });
-	
-	map.on('locationfound', function (e) {
 
-		if (locationMarker) {
-			map.removeLayer(locationMarker);
-		}
+});
 
-		if (accuracyCircle) {
-			map.removeLayer(accuracyCircle);
-		}
 
-		locationMarker =
-			L.marker(e.latlng)
-			 .addTo(map)
-			 .bindPopup(
-				 '<strong>Your Location</strong><br>' +
-				 'Accuracy: ' +
-				 Math.round(e.accuracy) +
-				 ' m'
-			 );
+// =====================================================
+// Location Found
+// Display the user's position and an accuracy circle.
+// =====================================================
 
-		accuracyCircle =
-			L.circle(
-				e.latlng,
-				{
-					radius: e.accuracy,
-					color: '#136aec',
-					fillColor: '#136aec',
-					fillOpacity: 0.15
-				}
-			).addTo(map);
+map.on('locationfound', function (e) {
 
-		locationMarker.openPopup();
+    if (locationMarker) {
+        map.removeLayer(locationMarker);
+    }
 
-	});
-	
-	map.on('locationerror', function (e) {
+    if (accuracyCircle) {
+        map.removeLayer(accuracyCircle);
+    }
 
-		console.log(e);
+    locationMarker = L.marker(e.latlng)
+        .addTo(map)
+        .bindPopup(
+            '<strong>Your Location</strong><br>' +
+            'Accuracy: ' +
+            Math.round(e.accuracy) +
+            ' m'
+        );
 
-		alert(
-			'Location error: ' + e.message
-		);
+    accuracyCircle = L.circle(e.latlng, {
+        radius: e.accuracy,
+        color: '#136aec',
+        fillColor: '#136aec',
+        fillOpacity: 0.15
+    }).addTo(map);
 
-	});
+    locationMarker.openPopup();
+});
+
+
+// =====================================================
+// Location Error Handling
+// Display any browser geolocation errors.
+// =====================================================
+
+map.on('locationerror', function (e) {
+
+    console.log(e);
+
+    alert(
+        'Location error: ' + e.message
+    );
+
+});
