@@ -31,6 +31,13 @@ const map = L.map('map', {
 	maxZoom: 9
 });
 
+// Share-link support.
+	const urlParams =
+		new URLSearchParams(window.location.search);
+
+	const requestedMunro =
+		urlParams.get('munro');
+
 map.setView(
     [57.0, -4.5],
     7
@@ -137,6 +144,17 @@ function createTriangleIcon(colour) {
 
 }
 
+// Create URL-friendly version of a Munro name.
+function munroToSlug(name) {
+    return name
+        .toLowerCase()
+        .replace(/'/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+}
+
+let sharedMunroMarker = null;
+
 // =====================================================
 // Load Munro Dataset
 // Read Munro locations and attributes from the
@@ -181,6 +199,17 @@ fetch('data/munros.geojson')
             marker.feature = feature;
 
             const p = feature.properties;
+			
+			if (
+				requestedMunro &&
+				munroToSlug(p.name) === requestedMunro
+			) {
+				sharedMunroMarker = marker;
+			}
+
+			const shareUrl =
+				`${window.location.origin}` +
+				`?munro=${munroToSlug(p.name)}`;
 
             // Build ascended/not ascended status text.
 
@@ -217,17 +246,25 @@ fetch('data/munros.geojson')
                     </p>
 
                     ${
-                        p.geograph_url ?
-                        `
-                        <p>
-                            <a href="${p.geograph_url}"
-                               target="_blank">
-                               View image on Geograph site
-                            </a>
-                        </p>
-                        `
-                        : ''
-                    }
+						p.geograph_url ?
+						`
+						<p>
+							<a href="${p.geograph_url}"
+							   target="_blank">
+							   View image on Geograph site
+							</a>
+						</p>
+						`
+						: ''
+					}
+
+					<p>
+						<a href="#"
+						   class="share-link"
+						   data-share-url="${shareUrl}">
+						   Copy share link
+						</a>
+					</p>
 
                 </div>
 
@@ -240,15 +277,68 @@ fetch('data/munros.geojson')
                 }
             );
 
+			marker.on('popupopen', function () {
+
+				const shareLink =
+					document.querySelector('.share-link');
+
+				if (!shareLink) {
+					return;
+				}
+
+				shareLink.addEventListener(
+					'click',
+					async function (e) {
+
+						e.preventDefault();
+
+						try {
+
+							await navigator.clipboard.writeText(
+								this.dataset.shareUrl
+							);
+
+							const originalText = this.textContent;
+
+							this.textContent = '✓ Link copied';
+
+							setTimeout(() => {
+								this.textContent = originalText;
+							}, 1500);
+
+						} catch (err) {
+
+							console.error(
+								'Clipboard copy failed',
+								err
+							);
+						}
+					}
+				);
+
+			});
+
             munroLayer.addLayer(marker);
 
         });
 
         munroLayer.addTo(map);
 
-        // Zoom map to show all Munros.
+		if (sharedMunroMarker) {
 
-        map.fitBounds(bounds);
+			map.setView(
+				sharedMunroMarker.getLatLng(),
+				7
+			);
+
+			sharedMunroMarker.openPopup();
+
+		} else {
+
+			// Zoom map to show all Munros.
+			map.fitBounds(bounds);
+
+		}
 
     })
 
@@ -361,11 +451,6 @@ document.getElementById('search-input').addEventListener('keydown', function (e)
     }
 
 });
-
-// =====================================================
-// Help Panel Controls
-// Open and close the Help panel.
-// =====================================================
 
 // =====================================================
 // Help Panel Controls
