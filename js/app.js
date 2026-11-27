@@ -236,6 +236,18 @@ fetch('data/munros.geojson')
                         ${p.height} m
                     </p>
 
+					${p.section_name ? `
+					<p>
+						<strong>SMC Section:</strong>
+						${p.section_name}
+					</p>` : ''}
+
+					${p.mwis_area ? `
+					<p>
+						<strong>MWIS Area:</strong>
+						${p.mwis_area}
+					</p>` : ''}
+
                     <p>
                         <strong>Ascents:</strong>
                         ${p.ascents}
